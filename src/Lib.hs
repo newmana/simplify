@@ -5,7 +5,6 @@ module Lib
     , Point
     , LineSegment
     , distance
-    , allButLast
     , perpendicularDistance
     , splitAtMaxDistance
     , douglasPeucker
@@ -19,6 +18,7 @@ type LineSegment = (Point,Point)
 distance :: Point -> Point -> Double
 distance (x1,y1) (x2,y2) = sqrt(((x1 - x2) ^ 2) + ((y1 - y2) ^ 2))
 
+-- https://en.wikipedia.org/wiki/Ramer%E2%80%93Douglas%E2%80%93Peucker_algorithm
 douglasPeucker :: Double -> Seq Point -> Seq Point
 douglasPeucker epsilon points
   | points == D.empty = D.empty
@@ -38,6 +38,7 @@ perpendicularDistance p@(pX, pY) (a@(aX, aY), b@(bX, bY))
         (deltaX, deltaY) = (bX - aX, bY - aY)
         u = ((pX - aX) * deltaX + (pY - aY) * deltaY) / (deltaX * deltaX + deltaY * deltaY)
 
+-- Takes a sequence of points but ignores the first and last elements.
 splitAtMaxDistance :: LineSegment -> Seq Point -> (Double, Int)
 splitAtMaxDistance ls points =
     D.foldlWithIndex (\(max, index) ni a -> if cp a ls > max then (cp a ls, ni + 1) else (max, index)) (0.0, 0) (modPts points)
